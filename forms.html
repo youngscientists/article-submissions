@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <title>Article Submissions</title>
+    
+    <?!= include('includes.css'); ?>
+    <?!= include('style.css'); ?>
+  </head>
+  
+  <body>
+  
+  <div id="preload">
+  <svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+   <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+  </svg>
+   </div>
+  
+   <style>
+   // To be pushed to style.css
+
+  
+   </style>
+  
+<div class="submit invisible">
+  
+ <div class="header">
+ <img class="logo" src="https://assets.ysjournal.com/articlesubmission/logos/logo.gif">
+
+<h1>Submit an Article</h1>
+ 
+ <div class="progress">
+  <span class="current" id="progress1">Eligibility <svg id="ticklayer1" class="invisible" style="enable-background:new 0 0 612 792;" version="1.1" viewBox="0 0 612 792" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><path class="st0" d="M562,396c0-141.4-114.6-256-256-256S50,254.6,50,396s114.6,256,256,256S562,537.4,562,396L562,396z    M501.7,296.3l-241,241l0,0l-17.2,17.2L110.3,421.3l58.8-58.8l74.5,74.5l199.4-199.4L501.7,296.3L501.7,296.3z"/></g></svg></span>
+  <span class="incomplete" id="progress2">Personal Details <svg id="ticklayer2" class="invisible" style="enable-background:new 0 0 612 792;" version="1.1" viewBox="0 0 612 792" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><path class="st0" d="M562,396c0-141.4-114.6-256-256-256S50,254.6,50,396s114.6,256,256,256S562,537.4,562,396L562,396z    M501.7,296.3l-241,241l0,0l-17.2,17.2L110.3,421.3l58.8-58.8l74.5,74.5l199.4-199.4L501.7,296.3L501.7,296.3z"/></g></svg></span>
+  <span class="incomplete" id="progress3">Article <svg id="ticklayer3" class="invisible" style="enable-background:new 0 0 612 792;" version="1.1" viewBox="0 0 612 792" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><path class="st0" d="M562,396c0-141.4-114.6-256-256-256S50,254.6,50,396s114.6,256,256,256S562,537.4,562,396L562,396z    M501.7,296.3l-241,241l0,0l-17.2,17.2L110.3,421.3l58.8-58.8l74.5,74.5l199.4-199.4L501.7,296.3L501.7,296.3z"/></g></svg></span>
+ </div>
+ </div>
+
+<div class="pages">
+ <div id="page1" class="visible">
+
+  <h3> Are you eligible? </h3>
+
+  <ul>
+  <li>Every author must be aged between 12 and 20 at the time of writing the article, adult help is acceptable but must be limited to proof reading and guidance.</li>
+  <li>The article (and any images) must be your own work and mustn't violate the copyright of another person. </li>
+  <li>Plagiarism will result in <b>immediate</b> rejection.
+  <li>The article must be on a scientific, technology, engineering, mathematical, or related topic.</li>
+  <li>The article must be factually correct. </li>
+  </ul>
+
+  <hr>
+
+  <h3>Is your article ready? </h3>
+  
+  <p>Every article must contain:
+  <ul>
+  <li>An Abstract</li>
+<li>Introduction</li>
+<li>Method/Results/Discussion</li>
+<li>Conclusion</li>
+<li>Full References in the <a href="http://www.chicagomanualofstyle.org/tools_citationguide.html" target="_blank">Chicago Style</a></li>
+  </ul>
+
+  <input type="checkbox" name="eligible" class="eligiblecheck">I am eligible and my article is complete <br />
+  
+  <button type="submit" onclick="confirmEligibility()" id="eligibilityButton" class="visible disabled button">Get Started</button>
+  
+ </div>
+
+ <div id="page2" class="invisible">
+
+   <form id="detailsForm" class="visible">
+   
+     <div id="detailsOne">
+    
+       <p>First Name</p>
+       <input id="fname" type="text" placeholder="Stephen" required>
+      
+       <p>Last Name</p>
+       <input id="lname" type="text" placeholder="Hawking" required>
+           
+       <p>Your Email</p>
+       <input id="email" type="email" placeholder="hawking@cam.ac.uk" required>
+       
+       <p>Your Birthday <i class="zmdi zmdi-help tooltip" title="Used to verify that you are, in fact, a young scientist"></i></p>
+       <input id="birthday" type="date" placeholder="01/01/2001" required>
+      
+       <button type="submit" onclick="submitDetailsOne()" id="submitDetailsButton" class="visible button">Next</button>
+    
+    </div>
+   
+   <div id="detailsTwo" class="invisible">
+     <p>Your Country</p>
+     <input id="nationality" type="text" placeholder="British" required>
+    
+     <p>Biography <i class="zmdi zmdi-help tooltip" title="Tell us about yourself!"></i></p>
+     <textarea id="biography" cols="40" rows="5" type="text" minlength="200" maxlength="400" placeholder="Write this in the third person!" required multiline></textarea>
+     <p id="biography-feedback"></p>
+    
+     <p>Photo <i class="zmdi zmdi-help tooltip" title="This will be displayed next to your article"></i></p>
+     <input id="photopicker" type="file" class="inputfile inputfile-6" accept="image/*" />
+     <label for="photopicker"><span></span> <strong><svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg></strong></label>
+    
+     <button type="submit" onclick="submitDetailsTwo()" id="submitDetailsButton" class="visible button">Next</button>
+     <button type="submit" onclick="goBackToDetailsOne()" id="goBackToDetailsOneButton" class="visible button">Go Back</button>
+   </div>
+   
+   <div id="detailsThree" class="invisible">
+     <p>Are you part of a YSJ Hub?</p>
+  
+  
+  <? var data = getHubs(); ?> 
+  <select id="hubdropdown">
+  <option value="none" selected>None</option>
+  <? for (var i = 1; i < data.length; i++) { ?>
+  <option value="<?= data [i][0]; ?>"><?= data [i][0]; ?></option>
+  <? } ?>
+  </select>
+            
+      <p>How did you find the journal?</p>
+      <select id="howfind">
+       <option value="">--Please Select--</option>
+       <option value="Search Engine">Search Engine</option>
+       <option value="Friend">Friend</option>
+       <option value="Teacher/School">Teacher/School</option>
+       <option value="YSJ Conference/Event Stand">YSJ Conference/Event Stand</option>
+       <option value="Other">Other</option>
+      </select> <br/>
+
+      <p>How did you start this article?</p>
+      <select id="refered">
+       <option value="">--Please Select--</option>
+       <option value="CREST Award">CREST Award</option>
+       <option value="Nuffield Project">Nuffield Project</option>
+       <option value="Extended Project (EPQ)">Extended Project (EPQ)</option>
+       <option value="IRIS">IRIS</option>
+       <option value="Google Science Fair">Google Science Fair</option>
+       <option value="Other">Other</option>
+      </select> <br/>
+     
+     <p>Your School/Organisation</p>
+     <input id="school" type="text" placeholder="Stockholm School of Science" required>
+     
+     <p>School/Organisation Address</p>
+     <textarea id="school-address" cols="40" rows="5" type="text" maxlength="400" placeholder="123 Education Street, London, WC3 9BT" multiline></textarea>
+     
+     <p>Teacher's Email <i class="zmdi zmdi-help tooltip" title="Allows us to contact a member of your school."></i></p>
+     <textarea id="school-teacher-email" cols="40" rows="5" type="text" maxlength="400" placeholder="mr.teacher@school.ac.uk" multiline></textarea>
+    
+     <button type="submit" onclick="submitDetailsThree()" id="submitDetailsButton" class="visible button">Next</button>
+     <button type="submit" onclick="goBackToDetailsTwo()" id="goBackToDetailsTwoButton" class="visible button">Go Back</button>
+     </div>
+   </form>
+
+</div> 
+
+ <div id="page3" class="invisible">
+
+ <form id="submitForm" class="visible">
+ <p>Title</p>
+ <input id="articletitle" type="text" placeholder="The Theory of Everything" required>
+ 
+ <p>Article Document</p>
+ <input id="file" type="file" class="inputfile inputfile-6" accept=".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.pages,.odt" multiple />
+ <label for="file"><span></span> <strong><svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg></strong></label>
+ 
+ <p>Article Summary</p>
+ <textarea id="abstract" cols="40" rows="5" type="text" minlength="20" maxlength="120" placeholder="This is an exploration into the very heart and soul of the world we live in." required multiline></textarea>
+ <p id="abstract-feedback"></p>
+ 
+ <p>Subject Area</p>
+  <select id="subject">
+   <option value="">--Please Select--</option>
+   <option value="Biology">Biology</option>
+   <option value="Chemistry">Chemistry</option>
+   <option value="Computer Science">Computer Science</option>
+   <option value="Engineering">Engineering</option>
+   <option value="Environmental & Earth Science">Environmental &amp; Earth Science</option>
+   <option value="Materials Science">Materials Science</option>
+   <option value="Mathematics">Mathematics</option>
+   <option value="Medicine">Medicine</option>
+   <option value="Physics">Physics</option>
+  </select> <br/>
+  
+ <p>Submission Type <i class="zmdi zmdi-help tooltip" title="Is this research conducted by you? Are you looking back at previous work?"></i></p>
+  <select id="type">
+   <option value="">--Please Select--</option>
+   <option value="Original Research">Original Research</option>
+   <option value="Review Article">Review Article</option>
+   <option value="Magazine Article">Magazine Article</option>
+   <option value="Blog">Blog</option>
+  </select> <br/>
+  
+  <p>Notes for the editor</p>
+ <textarea id="notes" cols="40" rows="5" type="text" placeholder="I have notes for the editor, my subject isn't listed, I have co-authors etc..." multiline></textarea>
+
+ <button type="submit" onclick="submitForm();" value="Submit" id="submit" class="visible button">Submit Article</button>
+ <button type="submit" onclick="goBackToDetailsThree();" value="Submit" id="goBackToDetailsTwoButton" class="visible button">Go Back</button>
+
+<div id="spinner">
+  <svg class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+   <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+  </svg>
+ </div>
+ </form>
+
+ <div class="success">
+ <img src="//assets.ysjournal.com/articlesubmission/articlesubmit.png" />
+ <br />
+ <h2><span>Hooray!</span> Your article has been submitted.</h2>
+ <h2>We will be in touch shortly.</h2>
+ <br />
+ <a id="output" class="button visible" target="_blank" href="https://ysjournal.com">Back to the homepage</a>
+ </div>
+
+ <div class="failure">
+ <img src="//assets.ysjournal.com/articlesubmission/failure.png" />
+ <br />
+ <h2><span>Dang Nabbit!</span> Something went wrong. Email us if this persists.</h2>
+ <br />
+ </div>
+
+</div>
+</div> <!-- Pages -->
+ <span class="exit"><a href="https://ysjournal.com/about-us/contact-us/" target="blank">Help</a></span>
+
+
+</div> <!-- .submit -->
+
+<?!= include('includes.js'); ?>
+
+<img class="background" onload="fadeIn(this)" style="display: none;" src="https://assets.ysjournal.com/img/issbg.jpg">
+
+  </body>
+</html>
+
+

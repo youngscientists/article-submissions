@@ -1,0 +1,534 @@
+<style>
+* {
+    font-family: sans-serif;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+	font-size: 1.02em;
+}
+
+::-webkit-input-placeholder {
+    color: grey;
+}
+
+html {
+     overflow: -moz-scrollbars-vertical;
+     overflow-y: scroll;
+}
+
+body {
+    background: #eee;
+    overflow-x: hidden;
+}
+
+#preload {
+    position: absolute;
+    top:30%;
+    left:47%;
+}
+
+#preload .spinner {
+    z-index: -999;
+}
+
+.background {
+ position: fixed; 
+  top: 0; 
+  left: 0; 
+
+  /* Preserve aspet ratio */
+  width: 100vw;
+  height: 100vh;
+  z-index: -9999;
+}
+
+li {
+    padding: 8px;
+    text-align: left;
+}
+
+.submit {
+    width: 800px;
+    background: #fff;
+    color:  v;
+    text-align: center;
+    padding: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    margin: 0 auto;
+    margin-top: 1%;
+    animation-delay: 0.6s;
+}
+
+ img.logo {
+     width: 50%;
+     height: 50%;
+     margin-bottom: 10px;
+   }
+   
+   .namewrapper > div {
+    display: inline-block;
+}
+
+.namewrapper div p {
+    display: block;
+}
+
+   // Temp Styles
+   
+   .submit {
+     height: auto;
+     transition: height 0.3s ease-in-out;
+   }
+
+.submit img {
+    margin: 0 auto;
+}
+
+.header {
+	margin: 0;
+	margin-bottom:10px;
+}
+
+.header h1 {
+    color:grey;
+    font-size: 2.5em;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    line-height: 5px;
+}
+
+.header h2 {
+    font-size: 1.2em;
+    padding: 8px;
+    letter-spacing: 3px;
+}
+
+.header h2 span {
+    color: #d13619;
+}
+
+.progress {
+    transition: all 0.3s ease-in-out;
+}
+
+.progress span {
+    width: 22%;
+	border-bottom: 2px solid grey;
+	padding: 5px;
+    margin-left: -5px;
+	cursor: pointer;
+    display: inline-block;
+    transition: all 0.3s ease-in-out;
+}
+
+.incomplete {
+    opacity: 0.7;
+}
+
+.current {
+    border-bottom: 2px solid #d13619 !important;
+    color: #d13619;
+}
+
+#ticklayer1, #ticklayer2, #ticklayer3, #ticklayer4 {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+    transition: all 0.3s ease-in-out;
+}
+
+.st0 {
+    fill: grey;
+}
+
+.current .st0 {
+    fill: #d13619;
+}
+
+ul {
+    margin: 20px;
+}
+
+form p {
+    padding-left: 8px;
+    text-align: left;
+    font-size: 0.8em;
+}
+
+form {
+    width: 500px;
+    margin: 0 auto;
+	margin-bottom:20px;
+    margin-top: 3%;
+    overflow: none;
+    max-width: 500px;
+    display: none;
+}
+
+input, #submit, textarea {
+    padding: 8px;
+    min-width: 468px;
+    margin: 0 auto;
+    margin-bottom: 16px;
+}
+
+#eligibility_button, #submit, .button {
+    background:rgba(198,40,40,1);
+    color: white;
+    border: none;
+    padding: 16px;
+    cursor: pointer;
+    width:  468px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    display: none;
+    text-decoration: none;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+#output {
+    width: auto;
+    animation-delay: 0.8s;
+}
+
+.visible {
+    display: inline-block !important;
+}
+
+.invisible {
+    display: none !important;
+}
+
+.success {
+    display: none;
+    font-size: 1.2em;
+    padding: 5%;
+}
+
+.success h2 {
+    animation-delay: 0.3s;
+    display: none;
+}
+
+.success h2 span {
+    display: inline-block;
+}
+
+.failure {
+    display: none;
+    font-size: 1.2em;
+    padding: 5%;
+}
+
+.failure h2 {
+    animation-delay: 0.3s;
+    display: none;
+    padding: 20px;
+}
+
+.failure h2 span {
+    display: inline-block;
+}
+
+input[type=text], input[type=email], input[type=date], textarea {
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -ms-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
+    outline: none;
+    border: 1px solid #DDDDDD;
+}
+
+input[type=text]:focus, input[type=email]:focus, input[type=date]:focus, textarea:focus {
+    box-shadow: 0 0 5px rgba(209,54,25, 1);
+    border: 1px solid rgba(209,54,25, 1);
+}
+
+select {
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -ms-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
+    outline: none;
+    border: 1px solid #DDDDDD;
+}
+.inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+#spinner {
+    display: none;
+    transition: all ease-in-out 0.3s;
+    padding: 20px;
+}
+
+.spinner {
+    -webkit-animation: rotator 1.4s linear infinite;
+    animation: rotator 1.4s linear infinite;
+}
+
+@-webkit-keyframes rotator {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(270deg);
+        transform: rotate(270deg);
+    }
+}
+
+@keyframes rotator {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(270deg);
+        transform: rotate(270deg);
+    }
+}
+.path {
+    stroke-dasharray: 187;
+    stroke-dashoffset: 0;
+    -webkit-transform-origin: center;
+    transform-origin: center;
+    -webkit-animation: dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite;
+    animation: dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite;
+}
+
+@-webkit-keyframes colors {
+    0% {
+        stroke: #F7C223;
+    }
+    25% {
+        stroke: #DE3E35;
+    }
+    50% {
+        stroke: #4285F4;
+    }
+    75% {
+        stroke: #1B9A59;
+    }
+    100% {
+        stroke: #4285F4;
+    }
+}
+
+@keyframes colors {
+    0% {
+        stroke: #F7C223;
+    }
+    25% {
+        stroke: #DE3E35;
+    }
+    50% {
+        stroke: #4285F4;
+    }
+    75% {
+        stroke: #1B9A59;
+    }
+    100% {
+        stroke: #4285F4;
+    }
+}
+@-webkit-keyframes dash {
+    0% {
+        stroke-dashoffset: 187;
+    }
+    50% {
+        stroke-dashoffset: 46.75;
+        -webkit-transform: rotate(135deg);
+        transform: rotate(135deg);
+    }
+    100% {
+        stroke-dashoffset: 187;
+        -webkit-transform: rotate(450deg);
+        transform: rotate(450deg);
+    }
+}
+@keyframes dash {
+    0% {
+        stroke-dashoffset: 187;
+    }
+    50% {
+        stroke-dashoffset: 46.75;
+        -webkit-transform: rotate(135deg);
+        transform: rotate(135deg);
+    }
+    100% {
+        stroke-dashoffset: 187;
+        -webkit-transform: rotate(450deg);
+        transform: rotate(450deg);
+    }
+}
+
+.js .inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.inputfile + label {
+    max-width: 100%;
+    /* 20px */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
+    margin: 0 auto;
+    margin-right: 10%;
+    margin-left: 9px;
+}
+
+.no-js .inputfile + label {
+    display: none;
+}
+
+.inputfile:focus + label,
+.inputfile.has-focus + label {
+}
+
+.inputfile + label * {
+    /* pointer-events: none; */
+    /* in case of FastClick lib use */
+}
+
+.inputfile + label svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    fill: currentColor;
+    margin-top: -0.25em;
+    /* 4px */
+    margin-right: 0.25em;
+    /* 4px */
+}
+
+
+.inputfile-6 + label {
+    color: #d3394c;
+    font-size: 1.05em;
+    margin: 0 auto;
+}
+
+.inputfile-6 + label {
+    border: 1px solid #e9e9e9;
+    background-color: #fff;
+    padding: 0;
+    width: 93.2%;
+}
+
+.inputfile-6 + label span,
+.inputfile-6 + label strong {
+    padding: 0.625rem 1.25rem;
+    padding-right: 65px;
+}
+
+.inputfile-6 + label span {
+    width: 400px;
+    min-height: 2em;
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: top;
+}
+
+.inputfile-6 + label strong {
+    height: 100%;
+    color: #fff;
+    background-color: rgba(209,54,25, 1);
+    display: inline-block;
+    font-weight: 300;
+    margin-right: 0px;
+    padding-left: 20px;
+    width: 50px;
+}
+
+.inputfile-6:focus + label strong,
+.inputfile-6.has-focus + label strong,
+.inputfile-6 + label:hover strong,
+.button:hover,
+#submit:hover {
+    background-color: rgba(209,54,25, 0.9);
+    border: rgba(209,54,25, 0.9);
+    transition: all 0.3s ease-in-out;
+}
+
+i .help {
+    background: url(https://assets.ysjournal.com/articlesubmission/images/question-mark.png) no-repeat center center;
+    background-size: cover;
+    height: 20px;      
+    width: 20px;
+}
+
+@media screen and (max-width: 50em) {
+    .inputfile-6 + label strong {
+        display: block;
+    }
+}
+
+span.exit a, span.exit a:hover, span.exit a:focus {
+     text-decoration: none;
+     color: grey;
+}
+
+input[type="checkbox"] {
+     margin: 4px;
+     min-width: 4px;
+}
+
+   .pages {
+     margin-bottom: 8px;
+     }
+
+.submit {
+ position: relative;
+}
+
+.disabled, #eligibilityButton {
+ transition: all 0.3s ease-in-out;
+}
+
+#eligibilityButton.disabled {
+ background: grey;
+ box-shadow: none;
+ cursor:not-allowed;
+ pointer-events: none;
+}
+
+li {
+    list-style-type: disc;
+}
+
+.submit, .header h1, .success {
+    color: #616161;
+}
+
+.spinner {
+    margin: 0 auto;
+}
+
+#biography-feedback, #abstract-feedback {
+    text-align: center;
+    font-size: 0.7em;
+    margin-top: -10px;
+}
+
+input[type=radio]{
+    display: inline-block;
+    min-width:10px;
+    margin: 10px;
+}
+</style>

@@ -1,0 +1,351 @@
+
+
+<script type="text/javascript" src="//code.jquery.com/jquery.min.js"></script>
+<script>
+var photoFile, photoData, fileData;
+var uploadCount; //how many things havve been uploaded (this will be like a semaphore)
+var fullname;
+
+
+
+//Page 1
+
+function confirmEligibility() {
+    //Transition with a fade
+    $("#page1").toggleClass("animated fadeOut").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
+        $("#page1").toggleClass("invisible");
+        $("#page2").toggleClass("invisible").css("opacity:0");
+        $("#page2").toggleClass("animated fadeIn");
+        $("#ticklayer1").attr("class", "animated fadeIn");
+        $('#progress1').toggleClass('incomplete').removeClass('current');
+        $('#progress2').toggleClass('current').removeClass('incomplete');
+    });
+}
+
+//Page 2
+
+$('#detailsForm').validate;
+
+$("#detailsForm").submit(function (e) {
+    e.preventDefault();
+});
+
+var photoReader = new FileReader();
+
+photoReader.onloadend = function (e) {
+    uploadCount++;
+    photoData = e.target.result;
+    if (uploadCount == 2){
+        doUpload();
+    }
+};
+
+function submitDetailsOne() {
+
+    if ( $('#fname').val().length === 0  || $('#lname').val().length === 0 || $('#birthday').val().length === 0){
+
+    } else
+    {   
+
+        //Check if the email is valid by looking for key symbols @ and .
+        if ( $('#email').val().includes ("@") &&  $('#email').val().includes (".")){
+
+            //Transition with a fade
+            $("#detailsOne").addClass ("animated fadeOut").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
+                $("#detailsOne").addClass ("invisible");
+                $("#detailsOne").removeClass ("animated fadeOut");
+                $("#detailsTwo").removeClass ("invisible").css("Opacity: 0");   
+                $("#detailsTwo").addClass ("animated fadeIn");
+            });
+
+        }
+
+    }
+}
+
+
+
+function goBackToDetailsOne() {
+
+    //No fade - if they want to go back, they want it quickly?
+    $("#detailsTwo").removeClass();
+    $("#detailsTwo").addClass("invisible");
+    $("#detailsOne").removeClass();
+
+}
+
+function goBackToDetailsTwo() {
+
+    //No fade - if they want to go back, they want it quickly?
+    $("#detailsThree").removeClass();
+    $("#detailsThree").addClass("invisible");
+    $("#detailsTwo").removeClass();
+
+}
+
+function submitDetailsTwo() {
+
+    if( $('#nationality').val().length === 0 || $('#biography').val().length < 200 || $('#photopicker').val().length === 0)  {
+
+    } else {
+    
+            //Transition with a fade
+            $("#detailsTwo").addClass ("animated fadeOut").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
+                $("#detailsTwo").addClass ("invisible");
+                $("#detailsTwo").removeClass ("animated fadeOut");
+                $("#detailsThree").removeClass ("invisible").css("Opacity: 0");   
+                $("#detailsThree").addClass ("animated fadeIn");
+            });
+        }
+    }
+
+function goBackToDetailsThree() {
+
+    //No fade - if they want to go back, they want it quickly?
+    $("#page3").removeClass();
+    $("#page3").addClass ("invisible");
+    $("#page2").removeClass ();
+    $("#detailsThree").removeClass ();
+    $("#ticklayer2").attr("class", "animated fadeIn");
+    $('#progress3').toggleClass('incomplete').removeClass('current');
+    $('#progress2').toggleClass('current').removeClass('incomplete');
+
+}
+
+function submitDetailsThree() {
+
+    if ( $('#school').val().length === 0){
+
+    } else
+    {   
+
+//Transition with a fade
+        $("#page2").addClass ("animated fadeOut").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
+            $("#page2").addClass ("invisible");
+            $("#page2").removeClass ("animated fadeOut");
+            $("#page3").removeClass ("invisible").css("Opacity: 0");   
+            $("#page3").addClass ("animated fadeIn");
+            $("#ticklayer2").attr("class", "animated fadeIn");
+            $('#progress2').toggleClass('incomplete').removeClass('current');
+            $('#progress3').toggleClass('current').removeClass('incomplete');
+        });
+    }
+}
+
+//Page 3
+var selectedHubIndex = 0; // 0 = none
+$('#hubdropdown').change(function(){
+   selectedHubIndex = $('option:selected',this).index();
+   google.script.run.withSuccessHandler(onHubDataReceived).getHubs();
+  
+});
+
+function onHubDataReceived(data){
+
+   $("#school").val(data[selectedHubIndex][1]);
+   $("#school-address").val(data[selectedHubIndex][2]);
+   $("#school-teacher-email").val(data[selectedHubIndex][3]);
+}
+
+$('#submitForm').validate;
+
+$("#submitForm").submit(function(e) {
+    e.preventDefault();
+});
+
+$('#articletitle').focus();
+
+var file, 
+    reader = new FileReader();
+
+// Upload the file to Google Drive
+reader.onloadend = function(e) {
+    uploadCount ++;
+    fileData = e.target.result;
+    if (uploadCount == 2){
+        doUpload ();
+    }
+};
+
+// Read the file on form submit
+function submitForm() {
+    if( $('#articletitle').val().length === 0 || $('#file').val().length === 0 || $('select#type').val().length === 0 || $('textarea#abstract').val().length === 0 || $('select#subject').val().length === 0 ) {
+
+    } else {
+        fullname = $('input#fname').val().toString() + " " + $('input#lname').val().toString();
+        uploadCount = 0;
+        file = $('#file')[0].files[0];
+        photoFile = $('#photopicker')[0].files[0];
+        //showMessage("Please Wait...");
+        $('#submit').removeClass('visible');
+        $('#goBackToDetailsTwoButton').removeClass('visible');
+        $('#page3').removeClass('visisble');
+        $('#spinner').addClass('visible animated fadeIn');
+        $("#ticklayer3").attr("class", "animated fadeIn");
+        //Upload photo  
+        photoReader.readAsDataURL(photoFile);
+        reader.readAsDataURL(file);
+    }
+}
+
+//Make sure to preserve order for passing to code.gs
+function doUpload (){
+    google.script.run
+        .withSuccessHandler(showMessage)
+        .uploadFileToGoogleDrive(
+        fileData, file.name, 
+        $('input#articletitle').val(),
+        fullname,
+        $('input#email').val(),
+        $('select#subject').val(),
+        $('input#birthday').val(),
+        $('input#school').val(),
+        $('textarea#school-address').val(),
+        $('textarea#school-teacher-email').val(),
+        $('select#hubdropdown').val(),
+        $('input#nationality').val(),
+        $('textarea#biography').val(),
+        $('textarea#abstract').val(),
+        photoData,
+        photoFile.name,
+        $('select#type').val(),
+        $('select#refered').val(),
+        $('select#howfind').val(),
+        $('textarea#notes').val()
+    );
+}
+
+// Success is returned by the script
+function showMessage(e) {
+    //Check if we have an error (by looking for error words)
+    if (e.toLowerCase().includes ("exception") || e.toLowerCase().includes ("error")){
+        setTimeout(function(){
+            $('form').addClass('animated fadeOut');
+            setTimeout(function(){
+                $('form').removeClass('visible');
+                $('.failure, .failure h2').addClass('animated fadeIn visible');
+            }, 800);
+        }, 2000);
+        $("#errorDescription").text(e);
+        return;
+    }
+
+    setTimeout(function(){
+        $('form').addClass('animated fadeOut');
+        setTimeout(function(){
+            $('form').removeClass('visible');
+            $('.success, .success h2, #output').addClass('animated fadeIn visible');
+            $('.progress').addClass('animated fadeOut');
+        }, 800);
+    }, 2000);
+
+}
+
+
+
+/*
+	By Osvaldas Valutis, www.osvaldas.info
+	Available for use under the MIT License
+*/
+( function( $, window, document, undefined )
+ {
+    $( '.inputfile' ).each( function()
+                           {
+        var $input	 = $( this ),
+            $label	 = $input.next( 'label' ),
+            labelVal = $label.html();
+
+        $input.on( 'change', function( e )
+                  {
+            var fileName = '';
+
+            if( this.files && this.files.length > 1 )
+                fileName = ( this.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', this.files.length );
+            else if( e.target.value )
+                fileName = e.target.value.split( '\\' ).pop();
+
+            if( fileName )
+                $label.find( 'span' ).html( fileName );
+            else
+                $label.html( labelVal );
+        });
+
+        // Firefox bug fix
+        $input
+            .on( 'focus', function(){ $input.addClass( 'has-focus' ); })
+            .on( 'blur', function(){ $input.removeClass( 'has-focus' ); });
+    });
+})( jQuery, window, document ); // Thanks, Osvladas!
+
+//Set the maximum and minimum dates for an author's birthday (they can't be born in the future or distant past)
+$(document).ready(function() {
+
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+    var yyyy = today.getFullYear();
+    if(dd<10){
+        dd='0'+dd
+    } 
+    if(mm<10){
+        mm='0'+mm
+    } 
+
+    today = yyyy+'-'+mm+'-'+dd;
+    var birthdayOfATwentyOneYearOld = (yyyy - 21)+'-'+mm+'-'+dd;
+    $("#birthday").attr("max", today).attr("min", birthdayOfATwentyOneYearOld);
+});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.1/jquery.validate.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script>
+<script src="https://assets.ysjournal.com/articlesubmission/flags/countrySelect.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.3.0/js/jquery.tooltipster.min.js"></script>
+		<script>
+        function fadeIn(obj) {
+    $('#preload').fadeOut(100); 
+    setTimeout(function(){ 
+        $(obj).fadeIn(400);
+        $('.submit').removeClass('invisible').addClass('animated fadeIn');
+    }, 200);
+}
+$(document).ready(function() {
+    $('.tooltip').tooltipster({
+        animation: 'fade',
+        side: 'right'
+    });
+    
+    $('.eligiblecheck').click(function() {
+        $('#eligibilityButton').toggleClass('disabled');
+    });
+});
+
+$(document).bind('drop dragover', function (e) {
+     e.preventDefault();
+});
+
+			$("#nationality").countrySelect({
+				defaultCountry: "gb",
+				//onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+				preferredCountries: ['gb', 'us', 'in']
+			});
+            
+            var bio_text_max = 400; 
+    $('#biography-feedback').html(bio_text_max + ' characters remaining. Minimum of 200.');
+
+    $('#biography').keydown(function() {
+        var text_length = $('#biography').val().length;
+        var text_remaining = bio_text_max - text_length;
+
+        $('#biography-feedback').html(text_remaining + ' characters remaining. Minimum of 200.');
+    });
+    
+    var abs_text_max = 120;
+    $('#abstract-feedback').html(abs_text_max + ' characters remaining');
+
+    $('#abstract').keydown(function() {
+        var text_length = $('#abstract').val().length;
+        var text_remaining = abs_text_max - text_length;
+
+        $('#abstract-feedback').html(text_remaining + ' characters remaining');
+    });
+		</script>
