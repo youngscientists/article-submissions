@@ -14,7 +14,22 @@ function include(filename) {
 
 // These arguments are passed by the script embedded into includes.js - For the love of god please preserve the order!
 function uploadFileToGoogleDrive(data, file, articletitle, name, email, subject, birthday, school, schooladdress, teacheremail, hub, nationality, biography, abstract, photoData, photoFile, type, refered, howfind, notes) {
- 
+
+  //Log everything
+  var logFolder, logFolders = DriveApp.getFoldersByName("Submissions System Logs");
+  if (logFolders.hasNext()) { // Checking to see if dropbox exists already.
+      logFolder = logFolders.next();
+  } else {
+      logFolder = DriveApp.createFolder("Submissions System Logs");
+  } 
+  
+  var logs = DocumentApp.create(Utilities.formatDate(new Date(), "GMT", "yyyy-MM-dd'T'HH:mm:ss'Z'"));
+  logs.getBody().appendParagraph(name + "| email:" + email + "|school: " + school + "| title: " + articletitle + " |" + abstract + "| teacher:" + teacheremail);
+  var logFile = DriveApp.getFileById(logs.getId());
+  logFolder.addFile(logFile);
+  DriveApp.removeFile(logFile);
+  
+  //Now let's get down to business  
   try {
  
     var dropbox = (type == "Blog") ? "Submitted Blogs" : "Submitted Articles";
