@@ -3,6 +3,7 @@ function doGet(e) {
   return HtmlService
     .createTemplateFromFile('forms')
     .evaluate()
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .setTitle("Submit an Article")
     .setFaviconUrl('https://assets.ysjournal.com/articlesubmission/favicon.ico');
 }
@@ -125,6 +126,7 @@ function uploadFileToGoogleDrive(data, file, articletitle, name, email, subject,
     //Move it to where the article is saved
     var detailDocId = detailDoc.getId();
     var detailDocFile = DriveApp.getFileById(detailDocId);
+    var submittedFolderID = submittedFolder.getId();
     submittedFolder.addFile (detailDocFile);
     DriveApp.removeFile(detailDocFile);
     
@@ -159,7 +161,7 @@ function uploadFileToGoogleDrive(data, file, articletitle, name, email, subject,
     
     var sheet = SpreadsheetApp.openById(file.getId());
     var date = Utilities.formatDate(new Date(), "GMT", "dd-MM-yyyy");
-    sheet.appendRow([date, articletitle, subject ,type, name, school, email, "Technical Review", FileURL]);
+    sheet.appendRow([date, articletitle, subject ,type, name, school, email, "Technical Review", FileURL, "", "", "", "", submittedFolderID]);
     
     // That's all for now, folks
     return FileURL;
