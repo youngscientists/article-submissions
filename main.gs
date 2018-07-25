@@ -66,27 +66,36 @@ function uploadFileToGoogleDrive(data, file, articletitle, name, email, subject,
     var fileId = docsFile.id;
     var DriveAppFile = DriveApp.getFileById(fileId); // retrieve file in DriveApp scope.
     var FileURL = DriveAppFile.getUrl(); //Retain URL of file for final end message to user
-    DriveAppFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.COMMENT);//.addEditor(email); // Sets the sharing permission to links, (no longer)gives the author write access.
-      
+    submittedFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.EDIT);//.addEditor(email); // Sets the sharing permission to links, (no longer)gives the author write access.
+    DriveAppFile.addEditor(email);
+    
     // All the user needs is the link, then we run this clean up code to organise the files for the editors
     submittedFolder.addFile(DriveAppFile);
     DriveApp.removeFile(DriveAppFile);
     
-    getMarkingGrid(articletitle,submittedFolder); //Copies the marking grid to the folders needed
+    var markingGridLink = getMarkingGrid(articletitle,submittedFolder); //Copies the marking grid to the folders needed and create a link
+      
+    /************ Start Author email ************/
+    var template = HtmlService.createTemplateFromFile("submitted").getRawContent();
     
     //Send an email to the Author (and one to ourselves - for posterity)
     var emailList = email;
     
-    //Email must have ' instead of ", must use inline styles, must be minified.
-    var mailbody = "<!DOCTYPE html><html> <head> <meta name='viewport' content='width=device-width, initial-scale=1'> </head> <body style='margin:0;font-family:sans-serif;word-wrap:break-word;'> <div class='header' align='center' style='width:100%;background:#d13619;'> <img src='https://assets.ysjournal.com/emails/logo-transparent.png'/> </div><div class='container' s style='width:1000px;margin:0 auto;color:grey;text-align:center;'> <h1 style='font-size:3em;font-weight:300;'>We have received your article.</h1> <div class='card' style='width:900px;height:100%;text-align:center;background:#eee;box-shadow:0 3px 6px rgba(0,0,0,0.16),0 3px 6px rgba(0,0,0,0.23);padding:20px;margin:20px;border-radius:2px;'> <h2 style='font-weight:300;'>"+ articletitle +"</h2> <h3>by " + name + "</h3> <br/> <p><span class='status' style='width:200px;background-color:#673AB7;color:white;padding:12px;font-size:1em;text-transform:uppercase;'>Currently In Review</span></p></div><div class='card' style='width:900px;height:100%;text-align:center;background:#eee;box-shadow:0 3px 6px rgba(0,0,0,0.16),0 3px 6px rgba(0,0,0,0.23);padding:20px;margin:20px;border-radius:2px;'> <h2 style='font-weight:300;'>Next Steps</h2> <p> <a href='https://ysjournal.com/meet-the-team/'>Our Team</a> will now look over your article, performing a plagiarism and basic data check. We usually get back to you within three days. </p></div><div class='card social' style='width:900px;height:100%;text-align:center;background:#eee;box-shadow:0 3px 6px rgba(0,0,0,0.16),0 3px 6px rgba(0,0,0,0.23);padding:20px;margin:20px;border-radius:2px;'> <a href='https://facebook.com/ysjournal'><img src='https://assets.ysjournal.com/emails/social/facebook.png' style='display:inline-block;width:40px;height:40px;'></a> <a href='https://twitter.com/ysjournal'><img src='https://assets.ysjournal.com/emails/social/twitter.png' style='display:inline-block;width:40px;height:40px;'></a> <a href='https://instagram.com/ysjournal'><img src='https://assets.ysjournal.com/emails/social/instagram.png' style='display:inline-block;width:40px;height:40px;'></a> </div></div></body></html>";
+    // Change template variables
+    template = template.replace("<? articleName ?>", articletitle);
+    template = template.replace("<? authorName ?>", name);
+    template = template.replace("<? docLink ?>", FileURL);
+    
     
     MailApp.sendEmail({
-     to: emailList,
+      to: emailList,
       name: 'Submissions - Young Scientists Journal',
-     subject: "Your article has been submitted",
-     htmlBody: mailbody,
-   });
-
+      subject: articletitle + " has been submitted",
+      htmlBody: template
+    });
+     
+    /************ End Author Email ************/
+ 
     Logger.log("Email Sent to Author");
     
     
@@ -112,7 +121,7 @@ function uploadFileToGoogleDrive(data, file, articletitle, name, email, subject,
     //Append text to body
     body.appendParagraph ("Name: " + name);
     body.appendParagraph ("Email: " + email);
-    body.appendParagraph ("Birthday: " + birthday);
+    body.appendParagraph ("Birthday: " + birthday.substring(0,4)); //We substring the first 6 chars because of data protection - we only want to store the year of birth!
     body.appendParagraph ("School: " + school);
     body.appendParagraph ("School Address: " + schooladdress);
     body.appendParagraph ("Teacher Email: " + teacheremail);
@@ -160,8 +169,10 @@ function uploadFileToGoogleDrive(data, file, articletitle, name, email, subject,
     }
     
     var sheet = SpreadsheetApp.openById(file.getId());
-    var date = Utilities.formatDate(new Date(), "GMT", "dd-MM-yyyy");
-    sheet.appendRow([date, articletitle, subject ,type, name, school, email, "Technical Review", FileURL, "", "", "", "", submittedFolderID]);
+    var date = Utilities.formatDate(new Date(), "GMT", "dd-MM-yyyy").toString();
+    sheet.appendRow([date, articletitle, subject ,type, name, school, email, "Technical Review", FileURL, "", "", "", "", submittedFolderID, markingGridLink]);
+    var row = sheet.getLastRow();
+    sheet.getActiveSheet().getRange(row, 1).setNumberFormat('@STRING@');
     
     // That's all for now, folks
     return FileURL;
@@ -240,7 +251,12 @@ function getMarkingGrid(title, folder){
   }
   
   
-  file.makeCopy("Marking Grid for " + title, folder); // Names the grid with Article title and puts it in the correct folder
+  var newMarkingGrid = file.makeCopy("Marking Grid for " + title, folder); // Names the grid with Article title and puts it in the correct folder
+  
+  newMarkingGrid.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.EDIT);
+  var url = newMarkingGrid.getUrl();
+  
+  return url;
 }
 
 function getHubs (){
@@ -257,4 +273,42 @@ function getHubs (){
   
   var data = SpreadsheetApp.openById(file.getId()).getActiveSheet().getDataRange().getValues();
   return data;
+}
+
+function setSharing() {
+  var daddyfolder = DriveApp.getFolderById("0B9zKY3g4_lx3T01UTHBoSGpLS3M");
+  
+  var folders = daddyfolder.getFolders();
+  
+  
+  
+  while (folders.hasNext()) {
+    var folder = folders.next();
+    folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.EDIT);
+    
+    }
+  }
+
+  
+  
+  
+  
+
+
+function test() {
+ //Update the article database
+    var sheetName = "Article Database";
+    var file, files = DriveApp.getFilesByName(sheetName); 
+    
+    if (files.hasNext ()){
+      file = files.next(); 
+    } else {
+      return "";
+    }
+    
+    var sheet = SpreadsheetApp.openById(file.getId());
+    var date = Utilities.formatDate(new Date(), "GMT", "dd-MM-yyyy").toString();
+    sheet.appendRow([date]);
+   var row = sheet.getLastRow();
+    sheet.getActiveSheet().getRange(row, 1).setNumberFormat('@STRING@');
 }
